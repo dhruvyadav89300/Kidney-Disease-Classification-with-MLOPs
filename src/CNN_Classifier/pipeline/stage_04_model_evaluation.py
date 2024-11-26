@@ -11,9 +11,10 @@ class EvaluationPipeline:
     def main(self):
         config = ConfigurationManager()
         eval_config = config.get_evaluation_config()
-        evlauation = Evaluation(eval_config)
-        evlauation.evalutation()
-        evlauation.log_into_mlflow()
+        evaluation = Evaluation(eval_config)
+        evaluation.evalutation()
+        evaluation.save_score()
+        evaluation.log_into_mlflow()
 
 
 if __name__ == "__main__":

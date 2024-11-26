@@ -12,7 +12,7 @@ stages:
     cmd: python src/CNN_Classifier/pipeline/stage_02_prepare_base_model.py
     deps:
       - src/CNN_Classifier/pipeline/stage_02_prepare_base_model.py
-      - config//config.yaml
+      - config/config.yaml
     params:
       - IMAGE_SIZE
       - INCLUDE_TOP
@@ -21,3 +21,34 @@ stages:
       - LEARNING_RATE
     outs:
       - artifacts/prepare_base_model
+  
+
+  training:
+    cmd: python src/CNN_Classifier/pipeline/stage_03_model_training.py
+    deps:
+      - src/CNN_Classifier/pipeline/stage_03_model_training.py
+      - config/config.yaml
+      - artifacts/data_ingestion/kidney-ct-scan-image
+      - artifacts/prepare_base_model
+    params:
+      - IMAGE_SIZE
+      - EPOCHS
+      - BATCH_SIZE
+      - AUGMENTATION
+    outs:
+      - artifacts/training/model.h5
+
+  
+  evaluation:
+    cmd: python src/CNN_Classifier/pipeline/stage_04_model_evaluation.py
+    deps:
+      - src/CNN_Classifier/pipeline/stage_04_model_evaluation.py
+      - config/config.yaml
+      - artifacts/data_ingestion/kidney-ct-scan-image
+      - artifacts/training/model.h5
+    params:
+      - IMAGE_SIZE
+      - BATCH_SIZE
+    metrics:
+    - scores.json:
+        cache: false
